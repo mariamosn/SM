@@ -1,0 +1,26 @@
+Maria Moșneag
+343C1
+Lab 1 - SM
+
+How to build and run:
+    1. Set N to the wanted value in:
+        secv.c
+        crcw_pram.c
+        crew_pram.c
+    2. make
+    3. The input for each version follows the same structure:
+        [elements of matrix A]
+        [elements of matrix B]
+
+To run the predefined tests:
+    Test 1:
+        1. Set N to 2 in the *.c files.
+        2. make
+        3. make test_2
+    Test 2:
+        1. Set N to 3 in the *.c files.
+        2. make
+        3. make test_3
+
+To clean:
+    make clean
