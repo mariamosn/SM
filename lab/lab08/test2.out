@@ -1,0 +1,11 @@
+Enter the number of processors (< 10):
+Processor action|	P0	|	P1	|	P2	|	Bus action
+	Initial	|	I	|	I	|	I	|	-
+	P0Rd	|	E	|	I	|	I	|	BusRd
+	P1Rd	|	S	|	S	|	I	|	BusRd
+	P2Rd	|	S	|	S	|	S	|	BusRd
+	P0Rd	|	S	|	S	|	S	|	-
+	P0Wr	|	M	|	I	|	I	|	BusRdX
+	P0Rd	|	M	|	I	|	I	|	-
+	P1Wr	|	I	|	M	|	I	|	BusRdX
+	P2Rd	|	I	|	S	|	S	|	BusRd
