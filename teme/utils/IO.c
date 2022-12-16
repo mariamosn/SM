@@ -55,7 +55,7 @@ void write_img(char *filename, int h, int w, rgb_t **img) {
     for (int i = 0; i < h; i++) {
         for (int j = 0; j < w; j++) {
             fprintf(out, "%c%c%c", img[i][j].r, img[i][j].g, img[i][j].b);
-        }        
+        }      
     }
 
     fclose(out);

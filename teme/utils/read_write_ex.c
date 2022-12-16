@@ -9,9 +9,9 @@ int main() {
 	write_img("../img/out/1_out.ppm", h, w, img);
 
 	for (int i = 0; i < h; i++) {
-        free(img[i]);
-    }
-    free(img);
+		free(img[i]);
+	}
+	free(img);
 
 	return 0;
 }

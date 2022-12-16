@@ -14,8 +14,8 @@ void blur(int h, int w, rgb_t ***img) {
 		res[i] = calloc(w, sizeof(rgb_t));
 	}
 
-    for (int i = 0; i < h; i++) {
-        for (int j = 0; j < w; j++) {
+	for (int i = 0; i < h; i++) {
+		for (int j = 0; j < w; j++) {
 			neigh = sum_r = sum_g = sum_b = 0;
 
 			for (int a = -BLUR_DEGREE; a <= BLUR_DEGREE; a++) {
@@ -33,8 +33,8 @@ void blur(int h, int w, rgb_t ***img) {
 			res[i][j].r = sum_r / neigh;
 			res[i][j].g = sum_g / neigh;
 			res[i][j].b = sum_b / neigh;
-        }
-    }
+		}
+	}
 
 	for (int i = 0; i < h; i++) {
 		free((*img)[i]);
@@ -47,24 +47,24 @@ void blur(int h, int w, rgb_t ***img) {
 int main() {
 	int h, w;
 	rgb_t **img, **res;
-    clock_t start, end;
+	clock_t start, end;
 
 	img = read_img(IN_FILENAME, &h, &w);
 
-    start = clock();
+	start = clock();
 
-    blur(h, w, &img);
-    
-    end = clock();
-    printf("Time for serial version: %f seconds\n",
+	blur(h, w, &img);
+	
+	end = clock();
+	printf("Time for serial version: %f seconds\n",
 		(double)(end - start) / CLOCKS_PER_SEC);
 
 	write_img(OUT_FILENAME, h, w, img);
 
 	for (int i = 0; i < h; i++) {
-        free(img[i]);
-    }
-    free(img);
+		free(img[i]);
+	}
+	free(img);
 
 	return 0;
 }
