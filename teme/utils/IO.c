@@ -17,13 +17,13 @@ rgb_t **read_img(char *filename, int *h, int *w) {
         return NULL;
     }
 
-    fscanf(in, "%d%d%d", h, w, &ctrl);
+    fscanf(in, "%d%d%d", w, h, &ctrl);
     if (ctrl != 255) {
         printf("Error: Wrong input file.\n");
         return NULL;
     }
 
-    printf("%d\n%d\n", *h, *w);
+    printf("h: %d\nw: %d\n", *h, *w);
 
     fgetc(in);
 
@@ -50,12 +50,10 @@ rgb_t **read_img(char *filename, int *h, int *w) {
 void write_img(char *filename, int h, int w, rgb_t **img) {
     FILE *out = fopen(filename, "w");
 
-    fprintf(out, "P6\n%d %d\n255\n", h, w);
+    fprintf(out, "P6\n%d %d\n255\n", w, h);
 
     for (int i = 0; i < h; i++) {
         for (int j = 0; j < w; j++) {
-            img[i][j].r = 0;
-            img[i][j].b = 0;
             fprintf(out, "%c%c%c", img[i][j].r, img[i][j].g, img[i][j].b);
         }        
     }
