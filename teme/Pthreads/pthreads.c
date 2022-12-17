@@ -95,17 +95,19 @@ void blur(int h, int w, rgb_t ***img) {
 int main() {
 	int h, w;
 	rgb_t **img, **res;
-	clock_t start, end;
+	struct timespec start, end;
+	double elapsed;
 
 	img = read_img(IN_FILENAME, &h, &w);
 
-	start = clock();
+	clock_gettime(CLOCK_MONOTONIC, &start);
 
 	blur(h, w, &img);
 	
-	end = clock();
-	printf("Time for pthread version: %f seconds\n",
-		(double)(end - start) / CLOCKS_PER_SEC);
+	clock_gettime(CLOCK_MONOTONIC, &end);
+	elapsed = end.tv_sec - start.tv_sec;
+	elapsed += (end.tv_nsec - start.tv_nsec) / 1000000000.0;
+	printf("Time for pthread version: %f seconds\n", elapsed);
 
 	write_img(OUT_FILENAME, h, w, img);
 
