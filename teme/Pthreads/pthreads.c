@@ -29,7 +29,9 @@ void *thread_function(void *arg) {
 	id = data->id;
 
 	start = id * h / NUM_THREADS;
-	end = ((id + 1) * h / NUM_THREADS) % (h + 1);
+	end = (id + 1) * h / NUM_THREADS;
+	if (end > h)
+		end = h;
 
 	for (int i = start; i < end; i++) {
 		for (int j = 0; j < w; j++) {

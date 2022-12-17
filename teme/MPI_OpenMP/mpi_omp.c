@@ -2,11 +2,13 @@
 #include <stdlib.h>
 #include <time.h>
 #include "mpi.h"
+#include <omp.h>
 
 #include "../utils/IO.h"
 #include "../utils/const.h"
 
 #define COORDINATOR 0
+#define LOCAL_NUM_THREADS 2
 
 #define W 0
 #define H 1
@@ -102,6 +104,8 @@ int main() {
 	}
 
 	// apply filter
+	omp_set_num_threads(LOCAL_NUM_THREADS);
+	#pragma omp parallel for private(neigh, sum_r, sum_g, sum_b)
 	for (int i = start_line; i < end_line; i++) {
 		for (int j = 0; j < data[W]; j++) {
 			neigh = sum_r = sum_g = sum_b = 0;
@@ -137,7 +141,6 @@ int main() {
 			int end = start + h / numtasks;
 			if (end > h)
 				end = h;
-
 			for (int j = start; j < end; j++) {
 				int x;
 				MPI_Recv(img[j], w, stype, i, 0,

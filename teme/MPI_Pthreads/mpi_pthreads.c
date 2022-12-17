@@ -2,11 +2,13 @@
 #include <stdlib.h>
 #include <time.h>
 #include "mpi.h"
+#include <pthread.h>
 
 #include "../utils/IO.h"
 #include "../utils/const.h"
 
 #define COORDINATOR 0
+#define LOCAL_NUM_THREADS 2
 
 #define W 0
 #define H 1
@@ -29,10 +31,70 @@ void define_struct(MPI_Datatype *stype) {
     MPI_Type_commit(stype);
 }
 
+struct my_arg {
+	int start_line;
+	int end_line;
+	int w;
+	int h;
+	rgb_t **crt;
+	rgb_t **res;
+	int id;
+	int b_d;
+	int num_th;
+};
+
+void *thread_function(void *arg) {
+	int w, h, id, b_d, num_th;
+	rgb_t **crt, **res;
+	struct my_arg *data;
+	int neigh, sum_r, sum_g, sum_b;
+	int start, end, start_line, end_line;
+
+	data = (struct my_arg *)arg;
+	crt = data->crt;
+	res = data->res;
+	start_line = data->start_line;
+	end_line = data->end_line;
+	w = data->w;
+	h = data->h;
+	b_d = data->b_d;
+	id = data->id;
+	num_th = data->num_th;
+
+	int lines = end_line - start_line;
+	start = start_line + id * lines / num_th;
+	end = start_line + (id + 1) * lines / num_th;
+	if (end > lines)
+		end = lines;
+
+	for (int i = start; i < end; i++) {
+		for (int j = 0; j < w; j++) {
+			neigh = sum_r = sum_g = sum_b = 0;
+
+			for (int a = -b_d; a <= b_d; a++) {
+				for (int b = -b_d; b <= b_d; b++) {
+					if (i + a >= 0 && i + a < h &&
+						j + b >= 0 && j + b < w) {
+						neigh++;
+						sum_r += crt[i + a][j + b].r;
+						sum_g += crt[i + a][j + b].g;
+						sum_b += crt[i + a][j + b].b;
+					}
+				}
+			}
+
+			res[i - start_line][j].r = sum_r / neigh;
+			res[i - start_line][j].g = sum_g / neigh;
+			res[i - start_line][j].b = sum_b / neigh;
+		}
+	}
+
+	pthread_exit(NULL);
+}
+
 int main() {
 	int numtasks, rank;
 	MPI_Datatype stype;
-	// clock_t start_time, end_time;
 	double start_time, end_time;
 
 	int h, w;
@@ -102,24 +164,26 @@ int main() {
 	}
 
 	// apply filter
-	for (int i = start_line; i < end_line; i++) {
-		for (int j = 0; j < data[W]; j++) {
-			neigh = sum_r = sum_g = sum_b = 0;
-			for (int a = -data[B_D]; a <= data[B_D]; a++) {
-				for (int b = -data[B_D]; b <= data[B_D]; b++) {
-					if (i + a >= 0 && i + a < data[CNT] &&
-						j + b >= 0 && j + b < data[W]) {
-						neigh++;
-						sum_r += img[i + a][j + b].r;
-						sum_g += img[i + a][j + b].g;
-						sum_b += img[i + a][j + b].b;
-					}
-				}
-			}
-			res[i - start_line][j].r = sum_r / neigh;
-			res[i - start_line][j].g = sum_g / neigh;
-			res[i - start_line][j].b = sum_b / neigh;
-		}
+	pthread_t threads[LOCAL_NUM_THREADS];
+    int ids[LOCAL_NUM_THREADS];
+    void *status;
+	struct my_arg thread_args[LOCAL_NUM_THREADS];
+
+	for (int i = 0; i < LOCAL_NUM_THREADS; i++) {
+		thread_args[i].crt = img;
+		thread_args[i].res = res;
+		thread_args[i].start_line = start_line;
+		thread_args[i].end_line = end_line;
+		thread_args[i].w = data[W];
+		thread_args[i].h = data[CNT];
+		thread_args[i].b_d = data[B_D];
+		thread_args[i].id = i;
+		thread_args[i].num_th = LOCAL_NUM_THREADS;
+		pthread_create(&threads[i], NULL, thread_function, &thread_args[i]);
+	}
+
+	for (int i = 0; i < LOCAL_NUM_THREADS; i++) {
+		pthread_join(threads[i], &status);
 	}
 
 	if (rank == COORDINATOR) {
