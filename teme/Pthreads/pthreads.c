@@ -107,7 +107,7 @@ int main() {
 	clock_gettime(CLOCK_MONOTONIC, &end);
 	elapsed = end.tv_sec - start.tv_sec;
 	elapsed += (end.tv_nsec - start.tv_nsec) / 1000000000.0;
-	printf("Time for pthread version: %f seconds\n", elapsed);
+	printf("Time for Pthreads version: %f seconds\n", elapsed);
 
 	write_img(OUT_FILENAME, h, w, img);
 
