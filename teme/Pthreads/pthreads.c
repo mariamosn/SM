@@ -6,8 +6,6 @@
 #include "../utils/IO.h"
 #include "../utils/const.h"
 
-#define NUM_THREADS 4
-
 struct my_arg {
 	int h;
 	int w;
