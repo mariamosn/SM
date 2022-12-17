@@ -32,7 +32,8 @@ void define_struct(MPI_Datatype *stype) {
 int main() {
 	int numtasks, rank;
 	MPI_Datatype stype;
-	clock_t start_time, end_time;
+	// clock_t start_time, end_time;
+	double start_time, end_time;
 
 	int h, w;
 	rgb_t **img, **res;
@@ -48,7 +49,7 @@ int main() {
 	if (rank == COORDINATOR) {
 		img = read_img(IN_FILENAME, &h, &w);
 
-		start_time = clock();
+		start_time = MPI_Wtime();
 
 		data[W] = w;
 		data[H] = h;
@@ -137,9 +138,8 @@ int main() {
 			}
 		}
 
-		end_time = clock();
-		printf("Time for MPI version: %f seconds\n",
-			(double)(end_time - start_time) / CLOCKS_PER_SEC);
+		end_time = MPI_Wtime();
+		printf("Time for MPI version: %f seconds\n", end_time - start_time);
 
 		write_img(OUT_FILENAME, h, w, img);
 
