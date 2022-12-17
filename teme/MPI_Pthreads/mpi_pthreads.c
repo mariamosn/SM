@@ -64,8 +64,8 @@ void *thread_function(void *arg) {
 	int lines = end_line - start_line;
 	start = start_line + id * lines / num_th;
 	end = start_line + (id + 1) * lines / num_th;
-	if (end > lines)
-		end = lines;
+	if (end > end_line)
+		end = end_line;
 
 	for (int i = start; i < end; i++) {
 		for (int j = 0; j < w; j++) {
