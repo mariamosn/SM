@@ -1,0 +1,99 @@
+Maria Moșneag
+343C1
+Tema 1 & 2 - SM
+
+Organizare:
+    .
+    |
+    |--- serial
+    |       |
+    |       |--- serial.c:  codul sursă al variantei seriale
+    |       |--- Makefile:  make = build + run pentru această variantă
+    |
+    |--- OpenMP
+    |       |
+    |       |--- omp.c:     codul sursă al variantei paralelizate cu OpenMP
+    |       |--- Makefile:  make = build + run pentru această variantă
+    |
+    |--- MPI
+    |       |
+    |       |--- mpi.c:     codul sursă al variantei paralelizate cu MPI
+    |       |--- Makefile:  make = build + run pentru această variantă
+    |
+    |--- Pthreads
+    |       |
+    |       |--- pthreads.c: codul sursă al variantei paralelizate cu Pthreads
+    |       |--- Makefile:  make = build + run pentru această variantă
+    |
+    |--- MPI_OpenMP
+    |       |
+    |       |--- mpi_omp.c: codul sursă al variantei hibride cu MPI și OpenMP
+    |       |--- Makefile:  make = build + run pentru această variantă
+    |
+    |--- MPI_Pthreads
+    |       |
+    |       |--- mpi_pthreads.c: codul sursă al var. hibride cu MPI și Pthreads
+    |       |--- Makefile:  make = build + run pentru această variantă
+    |
+    |--- utils
+    |       |
+    |       |--- const.h:       constante folosite
+    |       |--- IO.h și IO.c:  surse auxiliare ce conțin implementarea opera-
+    |                           țiilor de IO cu imaginile
+    |
+    |--- img:
+    |       |
+    |       |--- 1.ppm, 2.ppm: imagini folosite ca input
+    |       |--- out
+    |               |
+    |               |--- 1_out.ppm, 2_out.ppm: imagini rezultate în urma aplică-
+    |                                          rii filtrului blur
+    |
+    |--- Makefile: make = build pentru toate implementările
+    |
+    |--- README
+
+Mod de rulare:
+    + Din . =>  build = make
+                run = make {run_serial, run_mpi, run_mpi_omp,
+                            run_mpi_pthreads, run_omp, run_pthreads}
+    + Din folderul unei implementări => make.
+    + Pentru modificarea coeficientului de blur sau a fișierelor de input/output
+        se pot schimba constantele din ./utils/const.h.
+
+Idei de paralelizare:
+    - Am folosit 4 thread-uri/procese pentru fiecare implementare astfel încât
+        compararea timpilor de rulare să fie echitabilă.
+    - În cazul variantelor am optat pentru 2 procese cu câte 2 thread-uri
+        fiecare.
+
+Timpi de rulare:
+
+(BLUR_DEGREE = 5)
+-------------------------------------------------------------------------------
+                    |   1.ppm   (5184 x 3456)   |   2.ppm   (1920 x 1280)
+-------------------------------------------------------------------------------
+    serial          |   14.634868 seconds       |   1.873957 seconds
+-------------------------------------------------------------------------------
+    OpenMP          |   6.902738 seconds        |   0.970779 seconds
+-------------------------------------------------------------------------------
+    MPI             |   8.499982 seconds        |   1.137925 seconds
+-------------------------------------------------------------------------------
+    Pthreads        |   6.937866 seconds        |   0.950454 seconds
+-------------------------------------------------------------------------------
+    MPI_OpenMP      |   7.831352 seconds        |   1.073094 seconds
+-------------------------------------------------------------------------------
+    MPI_Pthreads    |   7.498362 seconds        |   1.026306 seconds
+-------------------------------------------------------------------------------
+
+Observații:
+    + Timpii de rulare sunt obținuți local, iar ca input am folosit și o imagine
+    cu dimensiuni mai mari (53,7 MB) pe care nu am inclus-o în arhivă; aceasta
+    poate fi descăractă de aici [2].
+    + Am contorizat doar timpul de aplicare efectivă a filtrului de blur, exclu-
+    zând timpul pentru IO.
+
+
+Resources:
+[1] https://www.scratchapixel.com/lessons/digital-imaging/simple-image-manipulations
+[2] https://filesamples.com/formats/ppm

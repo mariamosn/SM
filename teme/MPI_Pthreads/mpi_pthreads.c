@@ -118,6 +118,8 @@ int main() {
 		data[B_D] = BLUR_DEGREE;
 		for (int i = 1; i < numtasks; i++) {
 			int start = i * h / numtasks - BLUR_DEGREE;
+			if (start < 0)
+				start = 0;
 			int end = start + h / numtasks + BLUR_DEGREE;
 			if (end > h)
 				end = h;

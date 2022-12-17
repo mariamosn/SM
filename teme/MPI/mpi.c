@@ -32,7 +32,6 @@ void define_struct(MPI_Datatype *stype) {
 int main() {
 	int numtasks, rank;
 	MPI_Datatype stype;
-	// clock_t start_time, end_time;
 	double start_time, end_time;
 
 	int h, w;
@@ -56,7 +55,9 @@ int main() {
 		data[B_D] = BLUR_DEGREE;
 		for (int i = 1; i < numtasks; i++) {
 			int start = i * h / numtasks - BLUR_DEGREE;
-			int end = start + h / numtasks + BLUR_DEGREE;
+			if (start < 0)
+				start = 0;
+			int end = start + h / numtasks + 2 * BLUR_DEGREE;
 			if (end > h)
 				end = h;
 
